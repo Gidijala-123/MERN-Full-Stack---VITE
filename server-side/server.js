@@ -11,3 +11,4 @@ const dbConn = require("./config/dbConn");
 dbConn();
 
 app.use(express.json());
+app.use("/api/userDetails", require("./routers/userRouter"));
