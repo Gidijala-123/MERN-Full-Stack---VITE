@@ -11,6 +11,10 @@ app.use(express.json());
 const dbConn = require("./config/dbConn");
 dbConn();
 
+const cors = require("cors");
+app.use(cors());
+// app.use(cors({ origin: "http://localhost:5173" }));
+
 const errorHandler = require("./middleware/errorHandling");
 app.use(errorHandler);
 

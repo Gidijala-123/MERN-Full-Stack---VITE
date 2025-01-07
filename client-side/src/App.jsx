@@ -7,6 +7,7 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Headers from "./components/Headers";
+import FooterComponent from "./components/Footer";
 
 const App = () => {
   return (
@@ -20,8 +21,10 @@ const App = () => {
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/projects" element={<Projects />}></Route>
+
         {/* <Route path="*" element={<NotFound/>}></Route> */}
       </Routes>
+      <FooterComponent />
     </BrowserRouter>
   );
 };
