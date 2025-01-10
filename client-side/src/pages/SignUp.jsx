@@ -30,15 +30,21 @@ export default function SignUp() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success === false) {
-        return setErrorMessage(data.message);
+      setLoading(false); // stop loading effect
+
+      if (!res.ok) {
+        if (res.status === 400 && data.message === "User already exists") {
+          return setErrorMessage("User already exists. Please sign in.");
+        } else {
+          return setErrorMessage(data.message || "Something went wrong");
+        }
       }
-      setLoading(false); //if everything is ok while submitting a form
-      res.ok ? navigate("/signin") : "";
+
+      navigate("/signin");
     } catch (error) {
-      //it's a client side error if user faces errors like internet issues
+      // it's a client side error if user faces errors like internet issues
       setErrorMessage(error.message);
-      setLoading(false); //if everything is ok while submitting a formsetLoading
+      setLoading(false); // stop loading effect
     }
   };
 
