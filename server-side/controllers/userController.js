@@ -38,26 +38,33 @@ const registerUser = asyncHandler(async (req, res, next) => {
 const loginUser = asyncHandler(async (req, res, next) => {
   const { userMail, userPassword } = req.body;
   if (!userMail || !userPassword) {
-    return res.status(400).json({ message: "Please fill all the fields" });
+    return res.status(400).json({ message: "Please fill out all fields..!" });
   }
 
   try {
-    const user = await userModel.findOne({ userMail });
-    if (user && (await bcrypt.compare(userPassword, user.userPassword))) {
+    const userFromDb = await userModel.findOne({ userMail });
+    if (
+      userFromDb &&
+      (await bcrypt.compare(userPassword, userFromDb.userPassword))
+    ) {
       const generateToken = jwt.sign(
         {
           user: {
-            id: user._id,
-            userName: user.userName,
-            userMail: user.userMail,
+            id: userFromDb._id,
+            userName: userFromDb.userName,
+            userMail: userFromDb.userMail,
           },
         },
         process.env.ACCESS_TOKEN,
         { expiresIn: "30m" }
       );
+      const { userPassword, ...rest } = userFromDb._doc; // Hide password in the response
 
       if (generateToken) {
-        return res.status(200).json({ AccessToken: generateToken });
+        return res
+          .status(200)
+          .cookie("token", generateToken, { httpOnly: true })
+          .json(rest);
       } else {
         return res.status(401).json({ message: "Invalid email or password" });
       }
@@ -68,7 +75,5 @@ const loginUser = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
-
-module.exports = { registerUser, loginUser };
 
 module.exports = { registerUser, loginUser };
