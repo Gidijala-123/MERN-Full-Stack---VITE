@@ -21,7 +21,6 @@ const registerUser = asyncHandler(async (req, res, next) => {
         userMail,
         userPassword: hashedPassword,
       });
-
       if (newUser) {
         return res.status(201).json({
           message: `Registration Success for ${newUser.userName}`,
@@ -49,7 +48,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
     ) {
       const generateToken = jwt.sign(
         {
-          user: {
+          tokenKey: {
             id: userFromDb._id,
             userName: userFromDb.userName,
             userMail: userFromDb.userMail,
@@ -58,16 +57,13 @@ const loginUser = asyncHandler(async (req, res, next) => {
         process.env.ACCESS_TOKEN,
         { expiresIn: "30m" }
       );
+
       const { userPassword, ...rest } = userFromDb._doc; // Hide password in the response
 
-      if (generateToken) {
-        return res
-          .status(200)
-          .cookie("token", generateToken, { httpOnly: true })
-          .json(rest);
-      } else {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
+      return res
+        .status(200)
+        .cookie("token", generateToken, { httpOnly: true })
+        .json(rest);
     } else {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -76,4 +72,41 @@ const loginUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { registerUser, loginUser };
+const googleLogin = asyncHandler(async (req, res, next) => {
+  const { googleName, googleEmail, googlePhotoUrl } = req.body;
+
+  try {
+    let user = await userModel.findOne({ userMail: googleEmail });
+
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(
+        Math.random().toString(36).slice(-8),
+        10
+      );
+      user = await userModel.create({
+        userName:
+          googleName.toLowerCase().split(" ").join("") +
+          Math.floor(Math.random() * 1000),
+        userMail: googleEmail,
+        userPassword: hashedPassword,
+        userProfilePic: googlePhotoUrl,
+      });
+      await user.save();
+    }
+
+    const generateToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN, {
+      expiresIn: "30m",
+    });
+
+    const { userPassword, ...rest } = user._doc; // Hide password in the response
+    res
+      .status(200)
+      .cookie("accessToken", generateToken, { httpOnly: true })
+      .json(rest);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+module.exports = { registerUser, loginUser, googleLogin };
