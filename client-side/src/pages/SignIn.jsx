@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, data } from "react-router-dom";
 import { Label, TextInput, Button } from "flowbite-react";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/userRedux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null); // display error if any of the form field is empty
-  const [loading, setLoading] = useState(false); // to display loading effect while submitting a form
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,11 +25,10 @@ export default function SignIn() {
     e.preventDefault();
     console.log(formData);
     if (!formData.userMail || !formData.userPassword) {
-      return setErrorMessage("Please fill out all fields..!");
+      return dispatch(signInFailure("Please fill out all fields..!"));
     }
     try {
-      setLoading(true); // while submitting a form display a loading effect
-      setErrorMessage(null); // to clean any existing error messages
+      dispatch(signInStart());
       const res = await fetch("/api/userDetails/loginUser", {
         method: "POST",
         headers: {
@@ -32,26 +37,27 @@ export default function SignIn() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      setLoading(false); // stop loading effect
 
       if (!res.ok) {
         if (
           res.status === 401 &&
           data.message === "Invalid email or password"
         ) {
-          return setErrorMessage(
-            "Invalid email or password. Please try again."
+          return dispatch(
+            signInFailure(
+              data.message || "Invalid email or password. Please try again."
+            )
           );
         } else {
-          return setErrorMessage(data.message || "Something went wrong");
+          return dispatch(
+            signInFailure(data.message || "Something went wrong")
+          );
         }
       }
-
+      dispatch(signInSuccess(data));
       navigate("/dashboard");
     } catch (error) {
-      // it's a client side error if user faces errors like internet issues
-      setErrorMessage(error.message);
-      setLoading(false); // stop loading effect
+      dispatch(signInFailure(error.message));
     }
   };
 
