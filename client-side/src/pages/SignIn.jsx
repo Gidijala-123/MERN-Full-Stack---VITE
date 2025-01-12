@@ -25,7 +25,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    if (!formData.userMail || !formData.userPassword) {
+    if (!formData.email || !formData.password) {
       return dispatch(signInFailure("Please fill out all fields..!"));
     }
     try {
@@ -56,7 +56,7 @@ export default function SignIn() {
         }
       }
       dispatch(signInSuccess(data));
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -85,7 +85,7 @@ export default function SignIn() {
               <Label value="Enter your email" />
               <TextInput
                 type="email"
-                id="userMail"
+                id="email"
                 placeholder="name@company.com"
                 onChange={handleChange}
               />
@@ -94,7 +94,7 @@ export default function SignIn() {
               <Label value="Enter your password" />
               <TextInput
                 type="password"
-                id="userPassword"
+                id="password"
                 placeholder="Password"
                 onChange={handleChange}
               />

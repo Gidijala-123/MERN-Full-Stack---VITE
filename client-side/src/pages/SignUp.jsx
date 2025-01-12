@@ -17,7 +17,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    if (!formData.userName || !formData.userMail || !formData.userPassword) {
+    if (!formData.username || !formData.email || !formData.password) {
       return setErrorMessage("Please fill out all fields..!");
     }
     try {
@@ -74,16 +74,16 @@ export default function SignUp() {
               <TextInput
                 type="text"
                 placeholder="UserName"
-                id="userName"
+                id="username"
                 onChange={handleChange}
               ></TextInput>
             </div>
             <div>
-              <Label value="Enter your userMail" />
+              <Label value="Enter your email" />
               <TextInput
-                type="userMail"
+                type="email"
                 placeholder="name@company.com"
-                id="userMail"
+                id="email"
                 onChange={handleChange}
               ></TextInput>
             </div>
@@ -92,7 +92,7 @@ export default function SignUp() {
               <TextInput
                 type="password"
                 placeholder="Password"
-                id="userPassword"
+                id="password"
                 onChange={handleChange}
               ></TextInput>
             </div>

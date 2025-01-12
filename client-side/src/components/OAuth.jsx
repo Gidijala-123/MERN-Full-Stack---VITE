@@ -27,22 +27,18 @@ const OAuth = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          googleName: resultsFromGoogle.user.displayName,
-          googleEmail: resultsFromGoogle.user.email,
+          name: resultsFromGoogle.user.displayName,
+          email: resultsFromGoogle.user.email,
           googlePhotoUrl: resultsFromGoogle.user.photoURL,
         }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        return dispatch(
-          signInFailure(errorData.message || "Something went wrong")
-        );
-      }
-
       const data = await response.json();
+      // console.log(data.userMail); // Access the parsed JSON data
+      if (!response.ok) {
+        return dispatch(signInFailure(data.message || "Something went wrong"));
+      }
       dispatch(signInSuccess(data));
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
