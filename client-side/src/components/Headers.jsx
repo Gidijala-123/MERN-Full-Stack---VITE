@@ -41,12 +41,12 @@ const Headers = () => {
           className="hidden lg:inline"
         />
       </form>
-      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
+      <Button className="w-10 h-8 lg:hidden" color="gray" pill>
         <AiOutlineSearch />
       </Button>
       <div className="flex gap-2 md:order-2">
         <Button
-          className="w-12 h-10 hidden sm:inline"
+          className="w-13 h-10  hidden sm:inline focus:outline-none focus:ring-0 border-2 border-gray-200"
           color="gray"
           pill
           onClick={() => dispatch(toggleTheme())}
