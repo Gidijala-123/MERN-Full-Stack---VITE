@@ -15,21 +15,20 @@ export default function DashSidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Link to="/dashboard?tab=profile" className="cursor-pointer">
-            <Sidebar.Item
-              active={tab === "profile"}
-              href="/dashboard"
-              icon={HiUser}
-              label={"User"}
-              labelColor="dark"
-            >
-              Profile
-            </Sidebar.Item>
-          </Link>
+          <Sidebar.Item
+            active={tab === "profile"}
+            href="/dashboard?tab=profile"
+            icon={HiUser}
+            label={"User"}
+            labelColor="dark"
+          >
+            Profile
+          </Sidebar.Item>
           <Sidebar.Item
             href="/dashboard/profile"
             icon={HiArrowSmRight}
